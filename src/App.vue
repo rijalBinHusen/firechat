@@ -26,7 +26,7 @@
     </header>
 
     <section class="chat-box">
-      <!-- <div
+      <div
         v-for="message in state.messages"
         :key="message.key"
         :class="
@@ -39,7 +39,7 @@
           <div class="username">{{ message.username }}</div>
           <div class="content">{{ message.content }}</div>
         </div>
-      </div> -->
+      </div>
     </section>
 
     <footer>
@@ -86,18 +86,32 @@ const SendMessage = () => {
     content: inputMessage.value,
   };
 
-  console.log(message)
   messagesRef.push(message);
   inputMessage.value = "";
 };
 
-// return {
-//   inputUsername,
-//   Login,
-//   state,
-//   inputMessage,
-//   SendMessage,
-// };
+const Logout = () => {
+  state.username = "";
+}
+
+onMounted(() => {
+  const messagesRef = db.database().ref("messages");
+
+  messagesRef.on("value", (snapshot) => {
+    const data = snapshot.val();
+    let messages = [];
+
+    Object.keys(data).forEach((key) => {
+      messages.push({
+        id: key,
+        username: data[key].username,
+        content: data[key].content,
+      });
+    });
+
+    state.messages = messages;
+  });
+});
 </script>
 
 <style lang="scss">
